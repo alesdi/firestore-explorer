@@ -1,6 +1,6 @@
+import * as admin from "firebase-admin";
 import * as fs from "fs/promises";
 import * as vscode from "vscode";
-import { Document } from "./documentsListProvider";
 import { initializeFirebase } from "./initializeFirebase";
 import path = require("path");
 
@@ -10,11 +10,11 @@ import path = require("path");
 
 export async function openDocument(
   context: vscode.ExtensionContext,
-  documentReference: Document
+  documentReference: admin.firestore.DocumentReference,
 ) {
   await initializeFirebase(context);
 
-  const snapshotData = (await documentReference.reference.get()).data();
+  const snapshotData = (await documentReference.get()).data();
 
   if (snapshotData === undefined) {
     console.log(
@@ -56,7 +56,7 @@ export async function openDocument(
         const content = await fs.readFile(filePath, "utf8");
         const json = JSON.parse(content);
         try {
-          await documentReference.reference.set(json);
+          await documentReference.set(json);
           console.log("Changes applied!");
         } catch (error) {
           console.log("Upload error! Could not apply changes.");

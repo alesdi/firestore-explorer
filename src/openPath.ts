@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import { openCollection } from "./openCollection";
-import { openDocument } from "./openDocument";
 
 /**
  * Attempts to open a generic Firestore path supplied by the user
@@ -30,11 +28,11 @@ export async function openPath(context: vscode.ExtensionContext) {
     const cleanPath = parts.join('/');
 
     if (parts.length % 2) {
-      // The path refers to document
-      openDocument(context, cleanPath);
+      // The path refers to a document
+      // TODO: Implement
     } else {
       // The path refers to a collection
-      openCollection(context, cleanPath);
+      // TODO: Implement
     }
   }
 }
