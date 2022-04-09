@@ -4,38 +4,122 @@
   "description": "A simple explorer for Firebase Firestore Database",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.59.0"
+    "vscode": "^1.66.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:firestore-explorer.openPath"
+    "onCommand:firestore-explorer.openPath",
+    "onCommand:firestore-explorer.openDocument",
+    "onCommand:firestore-explorer.setServiceAccountKeyPath",
+    "onView:documentsList"
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "firestore-explorer.openPath",
-        "title": "Firestore: Open Path"
-      }
-    ],
     "configuration": {
       "title": "Firestore Explorer",
       "properties": {
-        "firestore-explorer.adminSdkKey": {
+        "firestore-explorer.serviceAccountKeyPath": {
           "type": "string",
           "default": "",
-          "description": "Path to Firebase Admin SDK key file"
+          "description": "Path to Firebase Service Account Key File"
         }
       }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "documents-explorer",
+          "title": "Firestore Documents Explorer",
+          "icon": "media/firestore-explorer.svg"
+        }
+      ]
+    },
+    "views": {
+      "documents-explorer": [
+        {
+          "id": "documentsList",
+          "contextualTitle": "Firestore Documents Explorer",
+          "name": "Firestore Documents",
+          "icon": "media/firestore-explorer.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "documentsList",
+        "contents": "No Firebase service account found [learn how to get yours](https://firebase.google.com/docs/admin/setup#initialize_the_sdk).\n[Open configuration](command:firestore-explorer.setServiceAccountKeyPath)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "firestore-explorer.openPath",
+        "title": "Firestore Explorer: Open Path"
+      },
+      {
+        "command": "firestore-explorer.openDocument",
+        "title": "Delete"
+      },
+      {
+        "command": "firestore-explorer.setServiceAccountKeyPath",
+        "title": "Firestore Explorer: Set Service Account Key Path"
+      },
+      {
+        "command": "documentsList.refreshEntry",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "documentsList.addEntry",
+        "title": "Add"
+      },
+      {
+        "command": "documentsList.editEntry",
+        "title": "Edit",
+        "icon": {
+          "light": "resources/light/edit.svg",
+          "dark": "resources/dark/edit.svg"
+        }
+      },
+      {
+        "command": "documentsList.deleteEntry",
+        "title": "Delete"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "documentsList.refreshEntry",
+          "when": "view == documentsList",
+          "group": "navigation"
+        },
+        {
+          "command": "documentsList.addEntry",
+          "when": "view == documentsList"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "documentsList.editEntry",
+          "when": "view == documentsList && viewItem == dependency",
+          "group": "inline"
+        },
+        {
+          "command": "documentsList.deleteEntry",
+          "when": "view == documentsList && viewItem == dependency"
+        }
+      ]
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc -watch -p ./",
+    "pretest": "npm run test-compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
@@ -43,17 +127,19 @@
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.2.2",
     "@types/node": "14.x",
-    "@types/vscode": "^1.59.0",
+    "@types/vscode": "^1.66.0",
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
     "eslint": "^7.27.0",
     "glob": "^7.1.7",
-    "mocha": "^8.4.0",
+    "mocha": "^9.2.2",
+    "ts-loader": "^9.2.2",
     "typescript": "^4.3.2",
-    "vscode-test": "^1.5.2"
+    "vscode-test": "^1.5.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
   },
   "dependencies": {
-    "firebase-admin": "^9.11.1",
-    "fs": "*"
+    "firebase-admin": "^10.0.2"
   }
 }
