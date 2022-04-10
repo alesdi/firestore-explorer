@@ -4,6 +4,7 @@
   "description": "A simple explorer for Firebase Firestore Database",
   "version": "0.1.0",
   "publisher": "alesdi",
+  "icon": "media/logo.png",
   "repository": {
     "url": "https://github.com/alesdi/firestore-explorer"
   },
@@ -43,7 +44,7 @@
         {
           "id": "firestore-explorer-view-container",
           "title": "Firestore Explorer",
-          "icon": "media/firestore-explorer.svg"
+          "icon": "media/activity-bar.svg"
         }
       ]
     },
@@ -52,7 +53,7 @@
         {
           "id": "firestore-explorer-view",
           "name": "List",
-          "icon": "media/firestore-explorer.svg",
+          "icon": "media/activity-bar.svg",
           "visibility": "visible",
           "when": "config.firestore-explorer.serviceAccountKeyPath != ''"
         }
