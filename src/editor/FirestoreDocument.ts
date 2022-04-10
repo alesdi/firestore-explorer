@@ -1,5 +1,8 @@
 import * as vscode from "vscode";
 
+/**
+ * A class representing a Firestore document as a vscode file
+ */
 export class FirestoreDocument implements vscode.FileStat {
     type: vscode.FileType;
     ctime: number;

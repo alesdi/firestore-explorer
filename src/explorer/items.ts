@@ -5,6 +5,9 @@ export abstract class Item extends vscode.TreeItem {
     abstract reference: admin.firestore.DocumentReference | admin.firestore.CollectionReference;
 }
 
+/**
+ * A Tree View item representing a Firestore document.
+ */
 export class DocumentItem extends Item {
     reference: admin.firestore.DocumentReference;
 
@@ -20,6 +23,10 @@ export class DocumentItem extends Item {
     }
 }
 
+
+/**
+ * A Tree View item representing a Firestore collection.
+ */
 export class CollectionItem extends Item {
     reference: admin.firestore.CollectionReference;
 
@@ -34,15 +41,22 @@ export class CollectionItem extends Item {
     }
 }
 
+
+/**
+ * A Tree View item representing the "Show more" button
+ */
 export class ShowMoreItemsItem extends Item {
     reference: admin.firestore.CollectionReference;
     offset: number;
 
     constructor(reference: admin.firestore.CollectionReference, offset: number) {
-        super("More documents...", vscode.TreeItemCollapsibleState.None,);
+        const pagingLimit = vscode.workspace.getConfiguration().get("firestore-explorer.pagingLimit") as number;
+        super(`Load ${pagingLimit} more`, vscode.TreeItemCollapsibleState.None,);
         this.reference = reference;
         this.offset = offset;
         this.iconPath = new vscode.ThemeIcon("more");
         this.command = { command: "firestore-explorer.showMoreItems", title: "More Items", arguments: [reference.path] };
     }
+
+    // TODO: Show progress animation when loading more items
 }

@@ -22,7 +22,7 @@ export default async function openPath(path?: string): Promise<void> {
       } else {
         // The path refers to a collection
         vscode.window.showErrorMessage("Only document paths are supported");
-        // TODO: handle collections (i.e. reveal in the tree view)
+        // TODO: handle collections (e.g. reveal in the tree view)
       }
     } catch (e) {
       console.error(e);

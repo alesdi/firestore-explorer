@@ -7,81 +7,63 @@ import openPath from "./commands/openPath";
 import openServiceAccountSettings from "./commands/openServiceAccountSettings";
 import { scheme } from "./constants";
 import { DocumentFileSystemProvider } from "./editor/DocumentFileSystemProvider";
-import ExplorerViewProvider from "./explorer/ExplorerViewProvider";
+import ExplorerDataProvider from "./explorer/ExplorerDataProvider";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-  console.log(
-    'Active',
-  );
-
-  const explorerViewProvider = new ExplorerViewProvider();
+  const explorerDataProvider = new ExplorerDataProvider();
 
   const explorerView = vscode.window.createTreeView('firestore-explorer-view', {
-    treeDataProvider: explorerViewProvider,
+    treeDataProvider: explorerDataProvider,
   });
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.setServiceAccountKeyPath",
-      () => {
-        openServiceAccountSettings();
-      },
+      openServiceAccountSettings
     ),
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.init",
-      () => {
-        init();
-      },
+      init
     ),
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.openPath",
-      async (path: string) => {
-        await openPath(path);
-      }
+      openPath
     )
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.refreshExplorer",
-      () => {
-        explorerViewProvider.refresh();
-      }
+      explorerDataProvider.refresh
     )
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.copyPath",
-      (item) => {
-        copyPath(item);
-      }
+      copyPath
     )
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.showMoreItems",
-      (path) => {
-        explorerViewProvider.showMoreItems(path);
-      }
+      explorerDataProvider.showMoreItems
     )
   );
   context.subscriptions.push(explorerView);
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(
-      () => {
-        vscode.commands.executeCommand('firestore-explorer.refreshExplorer');
-      }
+      explorerDataProvider.refresh
     )
   );
 
