@@ -80,8 +80,7 @@
       },
       {
         "command": "firestore-explorer.copyPath",
-        "title": "Copy Path",
-        "enablement": "false"
+        "title": "Copy Path"
       },
       {
         "command": "firestore-explorer.showMoreItems",
@@ -101,6 +100,16 @@
         {
           "command": "firestore-explorer.copyPath",
           "when": "view == firestore-explorer-view"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "firestore-explorer.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "firestore-explorer.showMoreItems",
+          "when": "false"
         }
       ]
     }
