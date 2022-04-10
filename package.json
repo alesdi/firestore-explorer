@@ -1,0 +1,153 @@
+{
+  "name": "firestore-explorer",
+  "displayName": "Firestore Explorer",
+  "description": "A simple explorer for Firebase Firestore Database",
+  "version": "0.1.0",
+  "publisher": "alesdi",
+  "icon": "media/logo.png",
+  "repository": {
+    "url": "https://github.com/alesdi/firestore-explorer"
+  },
+  "engines": {
+    "vscode": "^1.66.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:firestore-explorer.init",
+    "onCommand:firestore-explorer.openPath",
+    "onCommand:firestore-explorer.setServiceAccountKeyPath",
+    "onCommand:firestore-explorer.refreshExplorer",
+    "onCommand:firestore-explorer.showMoreItems",
+    "onView:firestore-explorer-view"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Firestore Explorer",
+      "properties": {
+        "firestore-explorer.serviceAccountKeyPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Firebase Service Account Key File"
+        },
+        "firestore-explorer.pagingLimit": {
+          "type": "number",
+          "default": 10,
+          "description": "Number of documents to show for each collection"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "firestore-explorer-view-container",
+          "title": "Firestore Explorer",
+          "icon": "media/activity-bar.svg"
+        }
+      ]
+    },
+    "views": {
+      "firestore-explorer-view-container": [
+        {
+          "id": "firestore-explorer-view",
+          "name": "List",
+          "icon": "media/activity-bar.svg",
+          "visibility": "visible",
+          "when": "config.firestore-explorer.serviceAccountKeyPath != ''"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "firestore-explorer-view",
+        "contents": "No Firebase service account found [learn how to get yours](https://firebase.google.com/docs/admin/setup#initialize_the_sdk).\n[Open configuration](command:firestore-explorer.setServiceAccountKeyPath)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "firestore-explorer.openPath",
+        "title": "Firestore Explorer: Open Path"
+      },
+      {
+        "command": "firestore-explorer.init",
+        "title": "Firestore Explorer: Initialize"
+      },
+      {
+        "command": "firestore-explorer.setServiceAccountKeyPath",
+        "title": "Firestore Explorer: Set Service Account Key path"
+      },
+      {
+        "command": "firestore-explorer.refreshExplorer",
+        "title": "Firestore Explorer: Refresh Explorer",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "firestore-explorer.copyPath",
+        "title": "Copy Path"
+      },
+      {
+        "command": "firestore-explorer.showMoreItems",
+        "title": "Show More Items",
+        "enablement": "false"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "firestore-explorer.refreshExplorer",
+          "when": "view == firestore-explorer-view",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "firestore-explorer.copyPath",
+          "when": "view == firestore-explorer-view"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "firestore-explorer.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "firestore-explorer.showMoreItems",
+          "when": "false"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc -watch -p ./",
+    "pretest": "npm run test-compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.66.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^9.2.2",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^10.0.2",
+    "request": "^2.79.0"
+  }
+}
