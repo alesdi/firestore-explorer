@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import * as vscode from 'vscode';
 
-import { initializeFirebase } from "../initializeFirebase";
+import initializeFirestore from "../utilities/initializeFirestore";
 import { CollectionItem, DocumentItem, Item, ShowMoreItemsItem } from "./items";
 
 export default class DocumentsListProvider implements vscode.TreeDataProvider<Item> {
@@ -37,8 +37,7 @@ export default class DocumentsListProvider implements vscode.TreeDataProvider<It
 
     async getChildren(element?: DocumentItem | CollectionItem): Promise<Item[] | undefined> {
         console.log("Children requested");
-        await initializeFirebase();
-        const firestore = admin.app().firestore();
+        const firestore = await initializeFirestore();
         if (!element) {
             const refs = await firestore.listCollections();
 

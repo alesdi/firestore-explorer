@@ -1,8 +1,11 @@
-import * as admin from "firebase-admin";
 import { TextDecoder, TextEncoder } from "util";
 import * as vscode from "vscode";
-import { initializeFirebase } from "../initializeFirebase";
+import initializeFirestore from "../utilities/initializeFirestore";
 
+/**
+ * Custom File System provider that allows to interact with Firestore documents as
+ * normal files in the editor.
+ */
 export class DocumentFileSystemProvider implements vscode.FileSystemProvider {
     private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
 
@@ -14,10 +17,9 @@ export class DocumentFileSystemProvider implements vscode.FileSystemProvider {
     }
 
     async stat(uri: vscode.Uri): Promise<vscode.FileStat> {
-        await initializeFirebase();
         const path = uri.path;
         console.log(`Opening document '${path}'`);
-        const firestore = admin.app().firestore();
+        const firestore = await initializeFirestore();
         const doc = await firestore.doc(path).get();
 
         const now = Date.now();
@@ -39,19 +41,17 @@ export class DocumentFileSystemProvider implements vscode.FileSystemProvider {
     }
 
     async readFile(uri: vscode.Uri): Promise<Uint8Array> {
-        await initializeFirebase();
         const path = uri.path;
         console.log(`Opening document '${path}'`);
-        const firestore = admin.app().firestore();
+        const firestore = await initializeFirestore();
         const doc = firestore.doc(path);
 
         return (new TextEncoder()).encode(JSON.stringify((await doc.get()).data(), null, 2));
     }
 
     async writeFile(uri: vscode.Uri, content: Uint8Array, options: { readonly create: boolean; readonly overwrite: boolean; }): Promise<void> {
-        await initializeFirebase();
         const path = uri.path;
-        const firestore = admin.app().firestore();
+        const firestore = await initializeFirestore();
 
         let json = undefined;
         try {

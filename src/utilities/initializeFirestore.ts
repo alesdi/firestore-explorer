@@ -1,13 +1,14 @@
 import * as admin from "firebase-admin";
 import * as vscode from "vscode";
-import openServiceAccountSettings from "./commands/openServiceAccountSettings";
+import openServiceAccountSettings from "../commands/openServiceAccountSettings";
 
 /**
- * Attempts to initialize firebase and prompts the user to check settings in case of failure
+ * Attempts to initialize Firestore and prompts the user to check settings in case of failure.
+ * @returns the initialized Firestore instance
  */
-export async function initializeFirebase(
+export default async function initializeFirestore(
   context?: vscode.ExtensionContext,
-): Promise<boolean> {
+): Promise<admin.firestore.Firestore> {
   try {
     // If Firebase is not initialized yet, attempt to do it now
     if (admin.apps.length === 0 || admin.apps[0]?.firestore() === undefined) {
@@ -36,12 +37,13 @@ export async function initializeFirebase(
       admin.initializeApp({
         credential: admin.credential.cert(require(filePath)),
       });
+      // Firebase is initialized.
     }
-    // Firebase is initialized.
-    return true;
   } catch (e) {
     // Something went wrong. Firebase could not be initialized.
     console.error(e);
-    return false;
   }
+
+  // TODO: handle errors in case of initialization failure
+  return admin.app().firestore();
 }
