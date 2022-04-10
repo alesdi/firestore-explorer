@@ -8,6 +8,7 @@ import openServiceAccountSettings from "./commands/openServiceAccountSettings";
 import { scheme } from "./constants";
 import { DocumentFileSystemProvider } from "./editor/DocumentFileSystemProvider";
 import ExplorerDataProvider from "./explorer/ExplorerDataProvider";
+import initializeFirestore from "./utilities/initializeFirestore";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -42,7 +43,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.refreshExplorer",
-      explorerDataProvider.refresh
+      () => explorerDataProvider.refresh()
     )
   );
 
@@ -56,14 +57,17 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.showMoreItems",
-      explorerDataProvider.showMoreItems
+      () => explorerDataProvider.refresh()
     )
   );
   context.subscriptions.push(explorerView);
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(
-      explorerDataProvider.refresh
+      () => {
+        initializeFirestore(true);
+        explorerDataProvider.refresh();
+      }
     )
   );
 

@@ -6,12 +6,10 @@ import openServiceAccountSettings from "../commands/openServiceAccountSettings";
  * Attempts to initialize Firestore and prompts the user to check settings in case of failure.
  * @returns the initialized Firestore instance
  */
-export default async function initializeFirestore(
-  context?: vscode.ExtensionContext,
-): Promise<admin.firestore.Firestore> {
+export default async function initializeFirestore(force = false): Promise<admin.firestore.Firestore> {
   try {
     // If Firebase is not initialized yet, attempt to do it now
-    if (admin.apps.length === 0 || admin.apps[0]?.firestore() === undefined) {
+    if (force || admin.apps.length === 0 || admin.apps[0]?.firestore() === undefined) {
       // First obtain the service account key path
       const filePath = (await vscode.workspace
         .getConfiguration("firestore-explorer")
