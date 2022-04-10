@@ -2,7 +2,11 @@
   "name": "firestore-explorer",
   "displayName": "Firestore Explorer",
   "description": "A simple explorer for Firebase Firestore Database",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "publisher": "alesdi",
+  "repository": {
+    "url": "https://github.com/alesdi/firestore-explorer"
+  },
   "engines": {
     "vscode": "^1.66.0"
   },
@@ -38,7 +42,7 @@
       "activitybar": [
         {
           "id": "firestore-explorer-view-container",
-          "title": "Firestore Documents Explorer",
+          "title": "Firestore Explorer",
           "icon": "media/firestore-explorer.svg"
         }
       ]
@@ -47,9 +51,9 @@
       "firestore-explorer-view-container": [
         {
           "id": "firestore-explorer-view",
-          "contextualTitle": "Firestore Documents Explorer",
-          "name": "Firestore Documents",
+          "name": "List",
           "icon": "media/firestore-explorer.svg",
+          "visibility": "visible",
           "when": "config.firestore-explorer.serviceAccountKeyPath != ''"
         }
       ]
@@ -142,6 +146,7 @@
     "webpack-cli": "^4.7.0"
   },
   "dependencies": {
-    "firebase-admin": "^10.0.2"
+    "firebase-admin": "^10.0.2",
+    "request": "^2.79.0"
   }
 }
