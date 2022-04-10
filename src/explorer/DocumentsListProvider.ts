@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { initializeFirebase } from "../initializeFirebase";
 import { CollectionItem, DocumentItem, Item, MoreDocumentsItem } from "./items";
 
-export class DocumentsListProvider implements vscode.TreeDataProvider<Item> {
+export default class DocumentsListProvider implements vscode.TreeDataProvider<Item> {
     onDidChangeTreeData?: vscode.Event<void | Item | Item[] | null | undefined> | undefined;
 
     async getTreeItem(element: Item): Promise<vscode.TreeItem> {
@@ -24,11 +24,11 @@ export class DocumentsListProvider implements vscode.TreeDataProvider<Item> {
         if (!element) {
             const refs = await firestore.listCollections();
 
-            return await refs.map(ref => new CollectionItem(ref.id, ref));
+            return refs.map(ref => new CollectionItem(ref.id, ref));
         } else if (element instanceof DocumentItem) {
             const refs = await element.reference.listCollections();
 
-            return await refs.map(ref => new CollectionItem(ref.id, ref));
+            return refs.map(ref => new CollectionItem(ref.id, ref));
         } else if (element instanceof CollectionItem) {
             const maximumSize = 10;
 
@@ -51,7 +51,6 @@ export class DocumentsListProvider implements vscode.TreeDataProvider<Item> {
 
     async getCollection(ref: admin.firestore.CollectionReference): Promise<CollectionItem> {
         const docs = await ref.limit(1).get();
-        console.log("Got collection");
         console.log(docs);
         return new CollectionItem(ref.id, ref, docs.size === 0);
     }

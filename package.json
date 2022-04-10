@@ -71,16 +71,8 @@
         "icon": "$(refresh)"
       },
       {
-        "command": "documentsList.addEntry",
-        "title": "Add"
-      },
-      {
         "command": "documentsList.editEntry",
-        "title": "Edit",
-        "icon": {
-          "light": "resources/light/edit.svg",
-          "dark": "resources/dark/edit.svg"
-        }
+        "title": "Edit"
       },
       {
         "command": "documentsList.deleteEntry",
@@ -88,26 +80,14 @@
       }
     ],
     "menus": {
-      "view/title": [
-        {
-          "command": "documentsList.refreshEntry",
-          "when": "view == documentsList",
-          "group": "navigation"
-        },
-        {
-          "command": "documentsList.addEntry",
-          "when": "view == documentsList"
-        }
-      ],
       "view/item/context": [
         {
-          "command": "documentsList.editEntry",
-          "when": "view == documentsList && viewItem == dependency",
-          "group": "inline"
+          "command": "documentsList.deleteEntry",
+          "when": "view == documentsList"
         },
         {
-          "command": "documentsList.deleteEntry",
-          "when": "view == documentsList && viewItem == dependency"
+          "command": "documentsList.editEntry",
+          "when": "view == documentsList"
         }
       ]
     }
