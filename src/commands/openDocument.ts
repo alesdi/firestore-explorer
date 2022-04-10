@@ -10,7 +10,7 @@ import path = require("path");
 export async function openDocument(
   documentReference: admin.firestore.DocumentReference,
 ) {
-  const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse(scheme + "://documents/" + documentReference.path));
-  await vscode.window.showTextDocument(doc, { preview: false });
+  const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse(scheme + ":/" + documentReference.path));
+  await vscode.window.showTextDocument(doc, { preview: false, preserveFocus: true });
   await vscode.languages.setTextDocumentLanguage(doc, "json");
 }

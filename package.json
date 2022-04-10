@@ -14,6 +14,7 @@
     "onCommand:firestore-explorer.openPath",
     "onCommand:firestore-explorer.setServiceAccountKeyPath",
     "onCommand:firestore-explorer.refreshExplorer",
+    "onCommand:firestore-explorer.showMoreItems",
     "onView:firestore-explorer-view"
   ],
   "main": "./out/extension.js",
@@ -75,6 +76,11 @@
       {
         "command": "firestore-explorer.copyPath",
         "title": "Copy Path"
+      },
+      {
+        "command": "firestore-explorer.showMoreItems",
+        "title": "Show More Items",
+        "enablement": "false"
       }
     ],
     "menus": {

@@ -2,10 +2,11 @@ import * as admin from "firebase-admin";
 import * as vscode from 'vscode';
 
 import { initializeFirebase } from "../initializeFirebase";
-import { CollectionItem, DocumentItem, Item, MoreDocumentsItem } from "./items";
+import { CollectionItem, DocumentItem, Item, ShowMoreItemsItem } from "./items";
 
 export default class DocumentsListProvider implements vscode.TreeDataProvider<Item> {
     private _onDidChangeTreeData = new vscode.EventEmitter<Item | undefined>();
+    private _paging: { [key: string]: number } = {};
 
     readonly onDidChangeTreeData: vscode.Event<Item | undefined> = this
         ._onDidChangeTreeData.event;
@@ -24,6 +25,16 @@ export default class DocumentsListProvider implements vscode.TreeDataProvider<It
         }
     }
 
+    async getParent(element: Item): Promise<Item | undefined> {
+        if (element instanceof DocumentItem) {
+            return this.getCollection(element.reference.parent);
+        } else if (element instanceof CollectionItem) {
+            if (element.reference.parent !== null) {
+                return this.getDocument(element.reference.parent);
+            }
+        }
+    }
+
     async getChildren(element?: DocumentItem | CollectionItem): Promise<Item[] | undefined> {
         console.log("Children requested");
         await initializeFirebase();
@@ -37,9 +48,9 @@ export default class DocumentsListProvider implements vscode.TreeDataProvider<It
 
             return refs.map(ref => new CollectionItem(ref.id, ref));
         } else if (element instanceof CollectionItem) {
-            const maximumSize = 10;
+            const limit = this._paging[element.reference.path] ?? 10;
 
-            const snapshots = await element.reference.limit(maximumSize + 1).get();
+            const snapshots = await element.reference.limit(limit + 1).get();
 
             const items: DocumentItem[] = [];
 
@@ -47,9 +58,9 @@ export default class DocumentsListProvider implements vscode.TreeDataProvider<It
                 items.push(new DocumentItem(snapshot.id, snapshot.ref));
             });
 
-            if (items.length > maximumSize) {
+            if (items.length > limit) {
                 items.pop();
-                return [...items, new MoreDocumentsItem(element.reference, maximumSize)];
+                return [...items, new ShowMoreItemsItem(element.reference, limit)];
             } else {
                 return items;
             }
@@ -65,5 +76,12 @@ export default class DocumentsListProvider implements vscode.TreeDataProvider<It
     async getDocument(ref: admin.firestore.DocumentReference): Promise<DocumentItem> {
         const collections = await ref.listCollections();
         return new DocumentItem(ref.id, ref, collections.length === 0);
+    }
+
+    async showMoreItems(path: string) {
+        const newLimit = this._paging[path] ?? 10 + 10;
+        console.log(`Showing more items (${newLimit})...`);
+        this._paging[path] = newLimit;
+        this.refresh();
     }
 }

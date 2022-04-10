@@ -18,6 +18,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const explorerViewProvider = new ExplorerViewProvider();
 
+  const explorerView = vscode.window.createTreeView('firestore-explorer-view', {
+    treeDataProvider: explorerViewProvider,
+  });
+
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.setServiceAccountKeyPath",
@@ -39,8 +43,8 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.openPath",
-      (path: string) => {
-        openPath(path);
+      async (path: string) => {
+        await openPath(path);
       }
     )
   );
@@ -64,8 +68,14 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider('firestore-explorer-view', explorerViewProvider)
+    vscode.commands.registerCommand(
+      "firestore-explorer.showMoreItems",
+      (path) => {
+        explorerViewProvider.showMoreItems(path);
+      }
+    )
   );
+  context.subscriptions.push(explorerView);
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(

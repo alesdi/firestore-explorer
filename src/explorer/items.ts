@@ -34,16 +34,15 @@ export class CollectionItem extends Item {
     }
 }
 
-export class MoreDocumentsItem extends Item {
+export class ShowMoreItemsItem extends Item {
     reference: admin.firestore.CollectionReference;
     offset: number;
 
     constructor(reference: admin.firestore.CollectionReference, offset: number) {
         super("More documents...", vscode.TreeItemCollapsibleState.None,);
-
         this.reference = reference;
         this.offset = offset;
         this.iconPath = new vscode.ThemeIcon("more");
-        // TODO: Show more documents
+        this.command = { command: "firestore-explorer.showMoreItems", title: "More Items", arguments: [reference.path] };
     }
 }
