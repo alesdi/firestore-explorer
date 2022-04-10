@@ -26,6 +26,11 @@
           "type": "string",
           "default": "",
           "description": "Path to Firebase Service Account Key File"
+        },
+        "firestore-explorer.pagingLimit": {
+          "type": "number",
+          "default": 10,
+          "description": "Number of documents to show for each collection"
         }
       }
     },
@@ -75,7 +80,8 @@
       },
       {
         "command": "firestore-explorer.copyPath",
-        "title": "Copy Path"
+        "title": "Copy Path",
+        "enablement": "false"
       },
       {
         "command": "firestore-explorer.showMoreItems",

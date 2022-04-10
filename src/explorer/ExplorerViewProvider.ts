@@ -47,7 +47,7 @@ export default class DocumentsListProvider implements vscode.TreeDataProvider<It
 
             return refs.map(ref => new CollectionItem(ref.id, ref));
         } else if (element instanceof CollectionItem) {
-            const limit = this._paging[element.reference.path] ?? 10;
+            const limit = this._paging[element.reference.path] ?? vscode.workspace.getConfiguration().get("firestore-explorer.pagingLimit");
 
             const snapshots = await element.reference.limit(limit + 1).get();
 
@@ -68,7 +68,6 @@ export default class DocumentsListProvider implements vscode.TreeDataProvider<It
 
     async getCollection(ref: admin.firestore.CollectionReference): Promise<CollectionItem> {
         const docs = await ref.limit(1).get();
-        console.log(docs);
         return new CollectionItem(ref.id, ref, docs.size === 0);
     }
 
@@ -78,7 +77,8 @@ export default class DocumentsListProvider implements vscode.TreeDataProvider<It
     }
 
     async showMoreItems(path: string) {
-        const newLimit = this._paging[path] ?? 10 + 10;
+        const defaultLimit = vscode.workspace.getConfiguration().get("firestore-explorer.pagingLimit") as number;
+        const newLimit = (this._paging[path] ?? defaultLimit) + defaultLimit;
         console.log(`Showing more items (${newLimit})...`);
         this._paging[path] = newLimit;
         this.refresh();
