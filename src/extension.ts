@@ -57,7 +57,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "firestore-explorer.showMoreItems",
-      () => explorerDataProvider.refresh()
+      (path: string) => explorerDataProvider.showMoreItems(path)
     )
   );
   context.subscriptions.push(explorerView);
