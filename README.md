@@ -12,7 +12,7 @@ This is a work in progress. Many critical features are still missing and unexpec
 
 To use this extension you will need to generate a Firebase service account from your Firebase console, as explained in the [Firebase Admin SDK documentation](https://firebase.google.com/docs/admin/setup#set-up-project-and-service-account).
 
-Provide a path to the service account JSON file in the `serviceAccountKeyPath` setting. You can also use the "Firestore Explorer: Init" command from the Command Palette to quickly reach the setting field.
+Provide a path to the service account JSON file in the `serviceAccountKeyPath` setting. You can also use the "Firestore Explorer: Initialize" command from the Command Palette to quickly reach the setting field.
 
 ## Features
 
