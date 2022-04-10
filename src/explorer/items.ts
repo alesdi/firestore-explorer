@@ -1,14 +1,16 @@
 import * as admin from "firebase-admin";
 import * as vscode from 'vscode';
 
-export class Item extends vscode.TreeItem { }
+export abstract class Item extends vscode.TreeItem {
+    abstract reference: admin.firestore.DocumentReference | admin.firestore.CollectionReference;
+}
 
 export class DocumentItem extends Item {
     reference: admin.firestore.DocumentReference;
 
     constructor(public id: string, reference: admin.firestore.DocumentReference, isEmpty: boolean = false) {
         super(id, vscode.TreeItemCollapsibleState.None);
-        this.command = { command: "firestore-explorer.openDocument", title: "Open", arguments: [this] };
+        this.command = { command: "firestore-explorer.openPath", title: "Open", arguments: [reference.path] };
 
         this.reference = reference;
         this.contextValue = 'document';

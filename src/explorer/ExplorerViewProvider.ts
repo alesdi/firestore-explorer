@@ -5,7 +5,14 @@ import { initializeFirebase } from "../initializeFirebase";
 import { CollectionItem, DocumentItem, Item, MoreDocumentsItem } from "./items";
 
 export default class DocumentsListProvider implements vscode.TreeDataProvider<Item> {
-    onDidChangeTreeData?: vscode.Event<void | Item | Item[] | null | undefined> | undefined;
+    private _onDidChangeTreeData = new vscode.EventEmitter<Item | undefined>();
+
+    readonly onDidChangeTreeData: vscode.Event<Item | undefined> = this
+        ._onDidChangeTreeData.event;
+
+    refresh(): void {
+        this._onDidChangeTreeData.fire(undefined);
+    }
 
     async getTreeItem(element: Item): Promise<vscode.TreeItem> {
         if (element instanceof CollectionItem) {

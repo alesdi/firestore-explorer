@@ -1,11 +1,13 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as admin from "firebase-admin";
 import * as vscode from "vscode";
-import DocumentsListProvider from "./explorer/DocumentsListProvider";
-import { openDocument } from "./openDocument";
-import { openPath } from "./openPath";
-import openServiceAccountSettings from "./openServiceAccountSettings";
+import copyPath from "./commands/copyPath";
+import init from "./commands/init";
+import openPath from "./commands/openPath";
+import openServiceAccountSettings from "./commands/openServiceAccountSettings";
+import { scheme } from "./constants";
+import { DocumentFileSystemProvider } from "./editor/DocumentFileSystemProvider";
+import ExplorerViewProvider from "./explorer/ExplorerViewProvider";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -14,12 +16,7 @@ export async function activate(context: vscode.ExtensionContext) {
     'Active',
   );
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "firestore-explorer.openPath",
-      () => openPath(context),
-    ),
-  );
+  const explorerViewProvider = new ExplorerViewProvider();
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -32,16 +29,53 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "firestore-explorer.openDocument",
-      (reference: admin.firestore.DocumentReference) => {
-        openDocument(context, reference);
+      "firestore-explorer.init",
+      () => {
+        init();
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "firestore-explorer.openPath",
+      (path: string) => {
+        openPath(path);
       }
     )
   );
 
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider('documentsList', new DocumentsListProvider())
+    vscode.commands.registerCommand(
+      "firestore-explorer.refreshExplorer",
+      () => {
+        explorerViewProvider.refresh();
+      }
+    )
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "firestore-explorer.copyPath",
+      (item) => {
+        copyPath(item);
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider('firestore-explorer-view', explorerViewProvider)
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(
+      () => {
+        vscode.commands.executeCommand('firestore-explorer.refreshExplorer');
+      }
+    )
+  );
+
+  context.subscriptions.push(vscode.workspace.registerFileSystemProvider(scheme, new DocumentFileSystemProvider(), { isCaseSensitive: true }));
 }
 
 // this method is called when your extension is deactivated

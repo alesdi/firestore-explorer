@@ -10,10 +10,11 @@
     "Other"
   ],
   "activationEvents": [
+    "onCommand:firestore-explorer.init",
     "onCommand:firestore-explorer.openPath",
-    "onCommand:firestore-explorer.openDocument",
     "onCommand:firestore-explorer.setServiceAccountKeyPath",
-    "onView:documentsList"
+    "onCommand:firestore-explorer.refreshExplorer",
+    "onView:firestore-explorer-view"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -30,25 +31,26 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "documents-explorer",
+          "id": "firestore-explorer-view-container",
           "title": "Firestore Documents Explorer",
           "icon": "media/firestore-explorer.svg"
         }
       ]
     },
     "views": {
-      "documents-explorer": [
+      "firestore-explorer-view-container": [
         {
-          "id": "documentsList",
+          "id": "firestore-explorer-view",
           "contextualTitle": "Firestore Documents Explorer",
           "name": "Firestore Documents",
-          "icon": "media/firestore-explorer.svg"
+          "icon": "media/firestore-explorer.svg",
+          "when": "config.firestore-explorer.serviceAccountKeyPath != ''"
         }
       ]
     },
     "viewsWelcome": [
       {
-        "view": "documentsList",
+        "view": "firestore-explorer-view",
         "contents": "No Firebase service account found [learn how to get yours](https://firebase.google.com/docs/admin/setup#initialize_the_sdk).\n[Open configuration](command:firestore-explorer.setServiceAccountKeyPath)"
       }
     ],
@@ -58,36 +60,35 @@
         "title": "Firestore Explorer: Open Path"
       },
       {
-        "command": "firestore-explorer.openDocument",
-        "title": "Delete"
+        "command": "firestore-explorer.init",
+        "title": "Firestore Explorer: Initialize"
       },
       {
         "command": "firestore-explorer.setServiceAccountKeyPath",
-        "title": "Firestore Explorer: Set Service Account Key Path"
+        "title": "Firestore Explorer: Set Service Account Key path"
       },
       {
-        "command": "documentsList.refreshEntry",
-        "title": "Refresh",
+        "command": "firestore-explorer.refreshExplorer",
+        "title": "Firestore Explorer: Refresh Explorer",
         "icon": "$(refresh)"
       },
       {
-        "command": "documentsList.editEntry",
-        "title": "Edit"
-      },
-      {
-        "command": "documentsList.deleteEntry",
-        "title": "Delete"
+        "command": "firestore-explorer.copyPath",
+        "title": "Copy Path"
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "firestore-explorer.refreshExplorer",
+          "when": "view == firestore-explorer-view",
+          "group": "navigation"
+        }
+      ],
       "view/item/context": [
         {
-          "command": "documentsList.deleteEntry",
-          "when": "view == documentsList"
-        },
-        {
-          "command": "documentsList.editEntry",
-          "when": "view == documentsList"
+          "command": "firestore-explorer.copyPath",
+          "when": "view == firestore-explorer-view"
         }
       ]
     }

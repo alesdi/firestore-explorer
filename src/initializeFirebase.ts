@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import * as vscode from "vscode";
-import openServiceAccountSettings from "./openServiceAccountSettings";
+import openServiceAccountSettings from "./commands/openServiceAccountSettings";
 
 /**
  * Attempts to initialize firebase and prompts the user to check settings in case of failure
