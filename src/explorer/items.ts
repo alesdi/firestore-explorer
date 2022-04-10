@@ -1,8 +1,7 @@
 import * as admin from "firebase-admin";
 import * as vscode from 'vscode';
 
-export class Item extends vscode.TreeItem {
-}
+export class Item extends vscode.TreeItem { }
 
 export class DocumentItem extends Item {
     reference: admin.firestore.DocumentReference;
@@ -12,6 +11,8 @@ export class DocumentItem extends Item {
         this.command = { command: "firestore-explorer.openDocument", title: "Open", arguments: [this] };
 
         this.reference = reference;
+        this.contextValue = 'document';
+        this.tooltip = reference.path;
         this.iconPath = new vscode.ThemeIcon("file");
         this.collapsibleState = isEmpty ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
     }
@@ -24,6 +25,8 @@ export class CollectionItem extends Item {
         super(id, vscode.TreeItemCollapsibleState.Collapsed);
 
         this.reference = reference;
+        this.contextValue = 'collection';
+        this.tooltip = reference.path;
         this.iconPath = new vscode.ThemeIcon("folder");
         this.collapsibleState = isEmpty ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
     }
