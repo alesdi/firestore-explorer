@@ -2,7 +2,7 @@
   "name": "firestore-explorer",
   "displayName": "Firestore Explorer",
   "description": "A simple explorer for Firebase Firestore Database",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "alesdi",
   "icon": "media/logo.png",
   "repository": {
@@ -88,6 +88,10 @@
         "title": "Copy Path"
       },
       {
+        "command": "firestore-explorer.orderBy",
+        "title": "Order by..."
+      },
+      {
         "command": "firestore-explorer.showMoreItems",
         "title": "Show More Items",
         "enablement": "false"
@@ -105,11 +109,19 @@
         {
           "command": "firestore-explorer.copyPath",
           "when": "view == firestore-explorer-view"
+        },
+        {
+          "command": "firestore-explorer.orderBy",
+          "when": "view == firestore-explorer-view"
         }
       ],
       "commandPalette": [
         {
           "command": "firestore-explorer.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "firestore-explorer.orderBy",
           "when": "false"
         },
         {

@@ -14,6 +14,12 @@ export default class ExplorerDataProvider implements vscode.TreeDataProvider<Ite
 
     private _onDidChangeTreeData = new vscode.EventEmitter<Item | undefined>();
     private _paging: { [key: string]: number } = {};
+    private _orderBy: {
+        [key: string]: {
+            field: string | undefined,
+            direction: 'asc' | 'desc'
+        }
+    } = {};
 
     readonly onDidChangeTreeData: vscode.Event<Item | undefined> = this
         ._onDidChangeTreeData.event;
@@ -24,9 +30,9 @@ export default class ExplorerDataProvider implements vscode.TreeDataProvider<Ite
 
     async getTreeItem(element: Item): Promise<vscode.TreeItem> {
         if (element instanceof CollectionItem) {
-            return this.getCollectionWithChildren(element.reference);
+            return this.getCollectionWithSize(element);
         } else if (element instanceof DocumentItem) {
-            return this.getDocumentWithChildren(element.reference);
+            return this.getDocumentWithSize(element);
         } else {
             return element;
         }
@@ -34,10 +40,10 @@ export default class ExplorerDataProvider implements vscode.TreeDataProvider<Ite
 
     async getParent(element: Item): Promise<Item | undefined> {
         if (element instanceof DocumentItem) {
-            return this.getCollectionWithChildren(element.reference.parent);
+            return new CollectionItem(element.reference.parent.id, element.reference.parent);
         } else if (element instanceof CollectionItem) {
             if (element.reference.parent !== null) {
-                return this.getDocumentWithChildren(element.reference.parent);
+                return new DocumentItem(element.reference.parent.id, element.reference.parent);
             }
         }
     }
@@ -47,15 +53,35 @@ export default class ExplorerDataProvider implements vscode.TreeDataProvider<Ite
         if (!element) {
             const refs = await firestore.listCollections();
 
-            return refs.map(ref => new CollectionItem(ref.id, ref));
+            return refs.map(ref => new CollectionItem(
+                ref.id,
+                ref,
+                {
+                    fieldName: this._orderBy[ref.path]?.field ?? 'id',
+                    direction: this._orderBy[ref.path]?.direction ?? 'asc',
+                }
+            ));
         } else if (element instanceof DocumentItem) {
             const refs = await element.reference.listCollections();
 
-            return refs.map(ref => new CollectionItem(ref.id, ref));
+            return refs.map(ref => new CollectionItem(ref.id,
+                ref,
+                {
+                    fieldName: this._orderBy[ref.path]?.field ?? 'id',
+                    direction: this._orderBy[ref.path]?.direction ?? 'asc',
+                }
+            ));
         } else if (element instanceof CollectionItem) {
             const limit = this._paging[element.reference.path] ?? vscode.workspace.getConfiguration().get("firestore-explorer.pagingLimit");
 
-            const snapshots = await element.reference.limit(limit + 1).get();
+            console.log(this._orderBy[element.reference.path]?.field ?? admin.firestore.FieldPath.documentId());
+            const snapshots = await element.reference
+                .limit(limit + 1)
+                .orderBy(
+                    this._orderBy[element.reference.path]?.field ?? admin.firestore.FieldPath.documentId(),
+                    this._orderBy[element.reference.path]?.direction ?? 'asc',
+                )
+                .get();
 
             const items: DocumentItem[] = [];
 
@@ -77,9 +103,9 @@ export default class ExplorerDataProvider implements vscode.TreeDataProvider<Ite
      * @param  {admin.firestore.CollectionReference} ref
      * @returns Promise
      */
-    async getCollectionWithChildren(ref: admin.firestore.CollectionReference): Promise<CollectionItem> {
-        const docs = await ref.limit(1).get();
-        return new CollectionItem(ref.id, ref, docs.size === 0);
+    async getCollectionWithSize(element: CollectionItem): Promise<CollectionItem> {
+        const docs = await element.reference.limit(1).get();
+        return element.withSize(docs.size);
     }
 
     /**
@@ -87,9 +113,9 @@ export default class ExplorerDataProvider implements vscode.TreeDataProvider<Ite
      * @param  {admin.firestore.DocumentReference} ref
      * @returns Promise
      */
-    async getDocumentWithChildren(ref: admin.firestore.DocumentReference): Promise<DocumentItem> {
-        const collections = await ref.listCollections();
-        return new DocumentItem(ref.id, ref, collections.length === 0);
+    async getDocumentWithSize(element: DocumentItem): Promise<DocumentItem> {
+        const collections = await element.reference.listCollections();
+        return element.withSize(collections.length);
     }
 
     /**
@@ -100,6 +126,14 @@ export default class ExplorerDataProvider implements vscode.TreeDataProvider<Ite
         const defaultLimit = vscode.workspace.getConfiguration().get("firestore-explorer.pagingLimit") as number;
         const newLimit = (this._paging[path] ?? defaultLimit) + defaultLimit;
         this._paging[path] = newLimit;
+        this.refresh();
+    }
+
+    async orderBy(path: string, field: string | undefined, direction: admin.firestore.OrderByDirection) {
+        this._orderBy[path] = {
+            field,
+            direction
+        };
         this.refresh();
     }
 }
