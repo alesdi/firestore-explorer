@@ -55,7 +55,10 @@ export default class ExplorerDataProvider implements vscode.TreeDataProvider<Ite
         } else if (element instanceof CollectionItem) {
             const limit = this._paging[element.reference.path] ?? vscode.workspace.getConfiguration().get("firestore-explorer.pagingLimit");
 
-            const snapshots = await element.reference.limit(limit + 1).get();
+            const snapshots = await element.reference
+                .limit(limit + 1)
+                .orderBy(admin.firestore.FieldPath.documentId())
+                .get();
 
             const items: DocumentItem[] = [];
 

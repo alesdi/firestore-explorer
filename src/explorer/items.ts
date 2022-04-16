@@ -16,6 +16,7 @@ export class DocumentItem extends Item {
         this.command = { command: "firestore-explorer.openPath", title: "Open", arguments: [reference.path] };
 
         this.reference = reference;
+        this.id = reference.path;
         this.contextValue = 'document';
         this.tooltip = reference.path;
         this.iconPath = new vscode.ThemeIcon("file");
@@ -34,6 +35,7 @@ export class CollectionItem extends Item {
         super(id, vscode.TreeItemCollapsibleState.Collapsed);
 
         this.reference = reference;
+        this.id = reference.path;
         this.contextValue = 'collection';
         this.tooltip = reference.path;
         this.iconPath = new vscode.ThemeIcon("folder");
@@ -53,6 +55,7 @@ export class ShowMoreItemsItem extends Item {
         const pagingLimit = vscode.workspace.getConfiguration().get("firestore-explorer.pagingLimit") as number;
         super(`Load ${pagingLimit} more`, vscode.TreeItemCollapsibleState.None,);
         this.reference = reference;
+        this.id = reference.path + "///showMore";
         this.offset = offset;
         this.iconPath = new vscode.ThemeIcon("more");
         this.command = { command: "firestore-explorer.showMoreItems", title: "More Items", arguments: [reference.path] };
