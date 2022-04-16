@@ -2,7 +2,7 @@
   "name": "firestore-explorer",
   "displayName": "Firestore Explorer",
   "description": "A simple explorer for Firebase Firestore Database",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "alesdi",
   "icon": "media/logo.png",
   "repository": {
