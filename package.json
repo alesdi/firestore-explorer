@@ -88,6 +88,10 @@
         "title": "Copy Path"
       },
       {
+        "command": "firestore-explorer.orderBy",
+        "title": "Order by..."
+      },
+      {
         "command": "firestore-explorer.showMoreItems",
         "title": "Show More Items",
         "enablement": "false"
@@ -105,11 +109,19 @@
         {
           "command": "firestore-explorer.copyPath",
           "when": "view == firestore-explorer-view"
+        },
+        {
+          "command": "firestore-explorer.orderBy",
+          "when": "view == firestore-explorer-view"
         }
       ],
       "commandPalette": [
         {
           "command": "firestore-explorer.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "firestore-explorer.orderBy",
           "when": "false"
         },
         {

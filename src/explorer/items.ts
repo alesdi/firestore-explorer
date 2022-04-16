@@ -9,18 +9,23 @@ export abstract class Item extends vscode.TreeItem {
  * A Tree View item representing a Firestore document.
  */
 export class DocumentItem extends Item {
-    reference: admin.firestore.DocumentReference;
-
-    constructor(public id: string, reference: admin.firestore.DocumentReference, isEmpty: boolean = false) {
-        super(id, vscode.TreeItemCollapsibleState.None);
+    constructor(
+        public documentId: string,
+        public reference: admin.firestore.DocumentReference,
+        public size: number | undefined = undefined,
+    ) {
+        super(documentId, vscode.TreeItemCollapsibleState.None);
         this.command = { command: "firestore-explorer.openPath", title: "Open", arguments: [reference.path] };
 
-        this.reference = reference;
         this.id = reference.path;
         this.contextValue = 'document';
         this.tooltip = reference.path;
         this.iconPath = new vscode.ThemeIcon("file");
-        this.collapsibleState = isEmpty ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
+        this.collapsibleState = size === 0 ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
+    }
+
+    withSize(size: number): DocumentItem {
+        return new DocumentItem(this.documentId, this.reference, size);
     }
 }
 
@@ -29,17 +34,27 @@ export class DocumentItem extends Item {
  * A Tree View item representing a Firestore collection.
  */
 export class CollectionItem extends Item {
-    reference: admin.firestore.CollectionReference;
+    constructor(
+        public collectionId: string,
+        public reference: admin.firestore.CollectionReference,
+        public orderBy: {
+            fieldName: string,
+            direction: admin.firestore.OrderByDirection
+        } = { fieldName: 'id', direction: 'asc' },
+        public size: number | undefined = undefined,
+    ) {
+        super(collectionId, vscode.TreeItemCollapsibleState.Collapsed);
 
-    constructor(public id: string, reference: admin.firestore.CollectionReference, isEmpty: boolean = false) {
-        super(id, vscode.TreeItemCollapsibleState.Collapsed);
-
-        this.reference = reference;
         this.id = reference.path;
         this.contextValue = 'collection';
         this.tooltip = reference.path;
         this.iconPath = new vscode.ThemeIcon("folder");
-        this.collapsibleState = isEmpty ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
+        this.collapsibleState = size === 0 ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
+        this.description = (orderBy.direction === 'asc' ? '↑' : '↓') + orderBy.fieldName;
+    }
+
+    withSize(size: number): CollectionItem {
+        return new CollectionItem(this.collectionId, this.reference, this.orderBy, size);
     }
 }
 

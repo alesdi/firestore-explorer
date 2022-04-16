@@ -3,11 +3,13 @@
 import * as vscode from "vscode";
 import copyPath from "./commands/copyPath";
 import init from "./commands/init";
+import orderBy from "./commands/oderBy";
 import openPath from "./commands/openPath";
 import openServiceAccountSettings from "./commands/openServiceAccountSettings";
 import { scheme } from "./constants";
 import { DocumentFileSystemProvider } from "./editor/DocumentFileSystemProvider";
 import ExplorerDataProvider from "./explorer/ExplorerDataProvider";
+import { Item } from "./explorer/items";
 import initializeFirestore from "./utilities/initializeFirestore";
 
 // this method is called when your extension is activated
@@ -51,6 +53,13 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "firestore-explorer.copyPath",
       copyPath
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "firestore-explorer.orderBy",
+      (item: Item) => orderBy(item, explorerDataProvider)
     )
   );
 
