@@ -18,7 +18,9 @@ Provide a path to the service account JSON file in the `serviceAccountKeyPath` s
 
 After configuring the extension with your service account, open the Firestore Explorer View in the activity bar to:
 
-- navigate all the collections and documents of your project. Items will be loaded only when needed and paged to minimize the number of API requests.
+- navigate all the collections and documents of your project (items will be loaded only when needed and paged to minimize the number of API requests);
+
+- sort documents in a collection by a specified field and direction;
 
 - view and edit the content of any document as a simple JSON file, taking advantage of the full power of vscode editor. Just save the file it to immediately update the document in the database.
 
@@ -33,10 +35,4 @@ After configuring the extension with your service account, open the Firestore Ex
 
 - Creating and deleting documents and collections is not supported yet.
 
-- There are no options for filtering and sorting documents.
-
-## Release Notes
-
-### 0.1.0
-
-Initial release.
+- There are no options for filtering documents.
